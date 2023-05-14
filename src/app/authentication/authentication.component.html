@@ -1,0 +1,40 @@
+<div class="mx-auto text-left">
+  <!-- Error Messages -->
+  <div class="max-w-sm my-4 mx-auto bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" [hidden]="errorMessages.length == 0" role="alert">
+    <p *ngFor="let message of errorMessages" class="m-1">{{ message }}</p>
+    <span (click)="errorMessages = []" class="absolute top-0 bottom-0 right-0 px-4 py-5">
+      <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+    </span>
+  </div>
+
+
+  <div class="max-w-sm mx-auto sm:shadow-md shadow-gray-400 py-12 px-8 rounded-xl">
+    <!-- REGISTER -->
+    <div *ngIf="onRegister" class="grid grid-cols-2 gap-2">
+      <div class="col-span-2 mb-4 font-mono">
+        <h1 class="text-3xl">REGISTER</h1>
+        <p class="text-slate-400 w-fit cursor-pointer" (click)="switchView()">login</p>
+      </div>
+      <input class="col-span-2 sm:col-span-1" type="text" placeholder="Vorname..." [formControl]="firstName" id="firstName" name="firstName" minlength="2" [required]="submitRegister">
+      <input class="col-span-2 sm:col-span-1" type="text" placeholder="Nachname..." [formControl]="lastName" id="lastName" name="lastName" minlength="2" [required]="submitRegister">
+      <input class="col-span-2" type="email" placeholder="Email..." [formControl]="email" id="email" name="email" [required]="submitRegister">
+      <input class="col-span-2" type="password" placeholder="Passwort..." [formControl]="new_password" id="new_password" name="new_password" minlength="8" max="15" [required]="submitRegister">
+      <input class="col-span-2" type="password" placeholder="Passwort bestätigen..." [formControl]="confirm_password" id="confirm_password" name="confirm_password"
+              onchange="this.setCustomValidity((this.value != new_password.value) ? 'Please enter the same Password as above' : '');" [required]="submitRegister">
+
+      <p class="col-span-2 text-xs text-gray-300 my-2 px-2">Mit der Registrierung stimmst du unseren Datenschutzbedingungen und AGBS zu!</p>
+
+      <input class="col-span-2 mt-2" type="submit" value="Weiter" (click)="register(firstName.value, lastName.value, email.value, new_password.value, confirm_password.value)" id="register" name="register">
+    </div>
+    <!-- LOGIN -->
+    <div *ngIf="!onRegister" class="grid grid-cols-2 gap-2">
+      <div class="col-span-2 mb-4 font-mono">
+        <h1 class="text-3xl">LOGIN</h1>
+        <p class="text-slate-400 w-fit cursor-pointer"  (click)="switchView()">register</p>
+      </div>
+      <input class="col-span-2" type="email" placeholder="Email..." [formControl]="email" id="email" name="email" [required]="submitLogin">
+      <input class="col-span-2" type="password" placeholder="Passwort..." [formControl]="password" id="password" name="password" [required]="submitLogin">
+      <input class="col-span-2 mt-8" type="submit" value="Weiter" (click)="login(email.value, password.value)">
+    </div>
+  </div>
+</div>

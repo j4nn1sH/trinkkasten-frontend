@@ -1,0 +1,47 @@
+<div class="mx-auto text-center py-2 sm:py-4 px-3 max-w-xl">
+  <div class="flex justify-end sm:mb-4">
+    <button type="button" routerLink="../" class=" bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+</div>
+<div class="mx-auto text-center py-2 sm:py-4 px-3 max-w-3xl">
+  <h1 class="text-[2.7em] font-mono sm:mb-2">Dashboard</h1>
+  <!-- Input fields to add new beverage -->
+  <div class="flex justify-center gap-2">
+    <input ype="text" placeholder="Getränkename..." [formControl]="beverageName" id="beverageName" name="beverageName">
+    <div class="relative h-fit w-fit">
+      <input type="number" step="0.01" [formControl]="beveragePrice" class="p-2 pr-7 w-16 text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+      <p class="absolute top-1/2 right-2 -translate-x-1/2 -translate-y-1/2 text-neutral-400">€</p>
+    </div>
+    <img src="assets/arrow-right.svg" (click)="addBeverage()" class="h-10 rounded-md hover:bg-primary hover:bg-opacity-25 cursor-pointer">
+  </div>
+  <div>
+    <div class="flex flex-wrap gap-3 justify-center mt-4">
+      <div *ngFor="let beverage of beverages" (click)="toggleActive(beverage._id)" [class.ring-negative]="!beverage.active" [class.ring-positive]="beverage.active" class="group ring-2 hover:bg-neutral-50 active:scale-105 duration-150 w-[7em] aspect-square rounded-3xl select-none cursor-default touch-manipulation" [class.ring-gray-400]="beverage.active">
+        <div class="flex flex-col justify-center items-center h-full">
+          <p class="text-xl text-gray-700 font-light">{{beverage.name}}</p>
+          <p class="text-gray-400">{{beverage.price | number:'1.2'}}€</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-12">
+    <canvas id="MyChart" >{{ chart }}</canvas>
+  </div>
+  <div class="h-52">
+    <div *ngIf="selectedUser" class="flex flex-col justify-center items-center mt-8">
+      <p class="text-xl text-gray-600 font-light mb-2">{{selectedUser.firstName}} {{selectedUser.lastName}}</p>
+      <p class="font-light text-negative" [class.text-positive]="selectedUser.balance >= 0">{{selectedUser.balance | number:'1.2-2'}}€</p>
+      <div class="flex gap-3 mt-6">
+        <div class="relative h-fit w-fit">
+          <input type="number" step="0.01" [formControl]="moneyAmount" class="p-2 pr-7 w-20 text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+          <p class="absolute top-1/2 right-2 -translate-x-1/2 -translate-y-1/2 text-neutral-400">€</p>
+        </div>
+        <img src="assets/arrow-right.svg" (click)="addMoney()" class="h-10 rounded-md hover:bg-primary hover:bg-opacity-25 cursor-pointer">
+      </div>
+    </div>
+  </div>
+</div>

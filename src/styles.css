@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input {
+  @apply p-2 bg-transparent ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:ring-opacity-50 rounded-md text-gray-700 font-light outline-none invalid:ring-rose-500 appearance-none
+}
+
+input[type="submit"] {
+  @apply bg-primary opacity-90 hover:opacity-100 active:scale-95 text-white cursor-pointer transition duration-300 ease-in-out
+}
+
+textarea {
+  @apply p-2 bg-transparent ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:ring-opacity-50 rounded-md text-gray-700 font-light outline-none invalid:ring-rose-500 appearance-none
+}
+
+button {
+  @apply bg-primary opacity-90 hover:opacity-100 active:scale-95 text-white cursor-pointer transition duration-300 ease-in-out p-3 rounded-3xl font-light
+}

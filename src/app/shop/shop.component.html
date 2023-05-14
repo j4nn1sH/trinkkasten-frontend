@@ -1,0 +1,72 @@
+<div class="mx-auto text-center py-2 sm:py-4 px-3 max-w-xl">
+  <div *ngIf="!showProfile" class="flex justify-end sm:mb-4">
+    <img src="assets/profile-icon.svg" class="w-12 rounded-3xl cursor-pointer shadow-amber-300 duration-300 ease-in-out" (click)="showProfile = true" [class.shadow-sm]="loggedIn" [class.shadow-red-600]="user.balance < -10" [class.animate-pulse]="user.balance < -30">
+  </div>
+  <div *ngIf="showProfile" class="flex justify-end sm:mb-4">
+    <button type="button" (click)="showProfile = false;" class=" bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+</div>
+<div *ngIf="!showProfile" class="mx-auto text-center py-2 sm:py-4 px-3 max-w-xl">
+  <h1 class="text-[2.7em] font-mono sm:mb-2">Getränke {{kitchen}}</h1>
+
+  <!-- Select beverage -->
+  <section *ngIf="current_section == 0">
+    <p class="text-slate-400 mb-2 sm:mb-8">Wähle hier deine Getränke aus:</p>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <div *ngFor="let beverage of beverages" (click)="addBeverage(beverage)" class="group ring-2 ring-gray-300 hover:ring-primary active:scale-105 duration-150 w-[45%] max-w-[10em] aspect-square rounded-3xl select-none cursor-default touch-manipulation" [class.ring-gray-400]="beverage.amount > 0">
+        <div class="flex flex-col justify-center items-center h-full">
+          <button type="button" (click)="beverage.amount = -1" class="-mt-8 invisible bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100" [class.group-hover:visible]="beverage.amount > 0">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <p class="text-xl text-gray-700 font-light">{{beverage.name}}</p>
+          <p class="text-gray-400">{{beverage.amount}} - {{beverage.price | number:'1.2'}}€</p>
+          <!-- <p class="text-gray-400">{{beverage.price | number:'1.2-2'}}€</p> -->
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-center gap-2">
+      <button class="mt-4 bg-white text-gray-400 ring-1 ring-gray-300 px-3" (click)="getBeverages()">Uff, vertippt</button>
+      <button class="mt-4" (click)="selectBeverages()">Weiter</button>
+    </div>
+  </section>
+
+  <!-- Select user -->
+  <section *ngIf="current_section == 1">
+    <p class="text-slate-400 mb-8">Wähle dich hier aus:</p>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <div *ngFor="let user of users" (click)="selectUser(user)" class="ring-2 ring-gray-300 hover:ring-primary active:scale-105 duration-150 w-[45%] max-w-[10em] aspect-square rounded-3xl">
+        <div class="flex flex-col justify-center items-center h-full">
+          <p class="text-xl text-gray-600 font-light">{{user.firstName}}</p>
+          <p class="text-xl text-gray-600 font-light">{{user.lastName}}</p>
+        </div>
+      </div>
+    </div>
+    <button class="mt-4 bg-white text-gray-400 ring-1 ring-gray-300" (click)="back()">Zurück</button>
+  </section>
+
+  <!-- Confirm -->
+  <section *ngIf="current_section == 2">
+    <p class="text-slate-400 mb-8">Bestätige hier deine Auswahl:</p>
+    <p class="text-xl text-gray-600 font-light mb-6">Hey {{selectedUser.firstName}}!🥳</p>
+
+    <div class="md:shadow-md max-w-xs mx-auto py-8">
+      <div class="text-gray-400 font-light border-b-2 w-52 p-2 mx-auto my-1">
+        <div *ngFor="let beverage of selectedBeverages">
+          <p>{{beverage.amount}}x {{beverage.name}} à {{beverage.price | number:'1.2-2'}}€</p>
+        </div>
+      </div>
+      <p class="text-gray-500 font-light">Gesamt: {{totalPrice | number:'1.2-2'}}€</p>
+    </div>
+    <div class="flex justify-center gap-2 mt-5">
+      <button class="mt-4 bg-white text-gray-400 ring-1 ring-gray-300" (click)="back()">Zurück</button>
+      <button class="mt-4" (click)="confirm()">Passt!</button>
+    </div>
+  </section>
+</div>
+<app-profile *ngIf="showProfile"></app-profile>
