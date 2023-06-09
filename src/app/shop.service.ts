@@ -26,6 +26,17 @@ export class ShopService {
     }, httpOptions);
   }
 
+  updateBeverage(beverageId: String, name: String, price: Number): Observable<any> {
+    return this.http.put(API_URL + '/shop/beverages/' + beverageId, {
+      name: name,
+      price: price
+    }, httpOptions);
+  }
+
+  deleteBeverage(beverageId: String): Observable<any> {
+    return this.http.delete(API_URL + '/shop/beverages/' + beverageId, httpOptions);
+  }
+
   getBeverages(): Observable<any> {
     return this.http.get(API_URL + '/shop/beverages');
   }
