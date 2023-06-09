@@ -16,6 +16,8 @@ export class DashboardComponent {
   beverageName = new FormControl();
   beveragePrice = new FormControl();
 
+  selectedBeverage: any;
+
   selectedUser: any;
   moneyAmount: FormControl<number> = new FormControl();
 
@@ -27,6 +29,14 @@ export class DashboardComponent {
   ngOnInit(): void {
     this.getBeverages();
     this.getUsers();
+  }
+
+  selectBeverage(beverage: any) {
+    if(this.selectedBeverage != beverage) {
+      this.selectedBeverage = beverage
+    } else {
+      this.selectedBeverage = null
+    }
   }
 
   addBeverage() {

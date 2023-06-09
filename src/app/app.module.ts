@@ -11,6 +11,7 @@ import { ShopComponent } from './shop/shop.component';
 import { AuthenticationComponent } from './authentication/authentication.component';
 import { ProfileComponent } from './profile/profile.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { LayoutComponent } from './layout/layout.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     ShopComponent,
     AuthenticationComponent,
     ProfileComponent,
-    DashboardComponent
+    DashboardComponent,
+    LayoutComponent
   ],
   imports: [
     BrowserModule,

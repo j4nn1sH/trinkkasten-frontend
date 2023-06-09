@@ -1,18 +1,27 @@
-<div *ngIf="loggedIn">
-  <div class="flex flex-col justify-center items-center">
-    <p class="text-xl text-gray-600 font-light my-6">Hey {{user.firstName}}!🥳</p>
-
-    <p class="text-gray-600 font-light mb-2">Dein Guthaben:</p>
-    <p class="text-gray-600 font-light">{{user.balance | number:'1.2-2'}}€</p>
+<div class="mx-auto text-center py-2 sm:py-4 px-3 max-w-xl">
+  <div class="flex justify-end sm:mb-4">
+    <button type="button" routerLink="../" class=" bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+      <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
   </div>
+  <app-authentication *ngIf="!loggedIn" (authenticated)="reloadAuthenticated()"></app-authentication>
+  <div *ngIf="loggedIn">
+    <div class="flex flex-col justify-center items-center">
+      <p class="text-xl text-gray-600 font-light my-6">Hey {{user.firstName}}!🥳</p>
 
-  <div class="grid justify-center gap-2 mt-5">
-    <a [attr.href]="payPalLink"><button class="bg-[#003087] hover:bg-opacity-90 text-white ring-1 ring-gray-300 opacity-100 w-full">Schulden begleichen</button></a>
-    <button *ngIf="user.manager" routerLink="./dashboard" class="bg-secondary hover:bg-rose-300 text-white">Dashboard</button>
-    <div class="flex flex-row gap-2">
-      <button class="bg-white hover:bg-neutral-100 text-gray-400 ring-1 ring-gray-300" (click)="toggleHide()">{{(user.hide) ? 'Show' : 'Hide'}} Profile</button>
-      <button class="bg-white hover:bg-neutral-100 text-gray-400 ring-1 ring-gray-300" (click)="logout()">Logout</button>
+      <p class="text-gray-600 font-light mb-2">Dein Guthaben:</p>
+      <p class="text-gray-600 font-light">{{user.balance | number:'1.2-2'}}€</p>
+    </div>
+
+    <div class="grid justify-center gap-2 mt-5">
+      <a [attr.href]="payPalLink"><button class="bg-[#003087] hover:bg-opacity-90 text-white ring-1 ring-gray-300 opacity-100 w-full">Schulden begleichen</button></a>
+      <button *ngIf="user.manager" routerLink="../dashboard" class="bg-secondary hover:bg-rose-300 text-white">Dashboard</button>
+      <div class="flex flex-row gap-2">
+        <button class="bg-white hover:bg-neutral-100 text-gray-400 ring-1 ring-gray-300" (click)="toggleHide()">{{(user.hide) ? 'Show' : 'Hide'}} Profile</button>
+        <button class="bg-white hover:bg-neutral-100 text-gray-400 ring-1 ring-gray-300" (click)="logout()">Logout</button>
+      </div>
     </div>
   </div>
 </div>
-<app-authentication *ngIf="!loggedIn" (authenticated)="reloadAuthenticated()"></app-authentication>

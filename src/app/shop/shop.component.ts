@@ -5,6 +5,7 @@ import { ShopService } from '../shop.service';
 import { ActivatedRoute } from '@angular/router';
 
 
+
 @Component({
   selector: 'app-shop',
   templateUrl: './shop.component.html',
@@ -113,5 +114,9 @@ export class ShopComponent {
       this.selectedUser = {};
       this.current_section = 0;
     });
+  }
+
+  logout() {
+    this.authService.logout()
   }
 }
