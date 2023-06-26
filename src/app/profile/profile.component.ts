@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../authentication.service';
 import { ShopService } from '../shop.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
@@ -12,14 +12,18 @@ export class ProfileComponent {
   user: any = {};
   loggedIn = false;
   payPalLink = ''
+  selectedBalance: any = {};
+  history: any = []
 
   constructor(
-    private route: ActivatedRoute,
     private shopService: ShopService, // bad practice
-    private authService: AuthenticationService
-  ) {
-    this.getPayLink()
+    private authService: AuthenticationService,
+    private location: Location
+  ) {}
+
+  ngOnInit(): void {
     this.reloadAuthenticated();
+    this.getBalances();
   }
 
   reloadAuthenticated() {
@@ -29,22 +33,31 @@ export class ProfileComponent {
     });
   }
 
-
   logout() {
     this.authService.logout();
     this.loggedIn = false;
     this.reloadAuthenticated();
   }
 
-  toggleHide() {
-    this.shopService.toggleHide().subscribe((data) => {
-      this.user = data;
+  getBalances() {
+    this.shopService.getUserBalances().subscribe((data) => {
+      this.user.balances = data;
+      console.log(data)
     });
   }
 
-  getPayLink() {
-    this.shopService.getPayLink().subscribe((data) => {
-      this.payPalLink = data.link;
-    });
+  selectBalance(balance: any) {
+    if(this.selectedBalance == balance) {
+      this.selectedBalance = null;
+      return;
+    }
+    this.shopService.getUserHistory(balance.kitchen).subscribe((data) => {
+      this.history = data
+      this.selectedBalance = balance;
+    })
+  }
+
+  back() {
+    this.location.back();
   }
 }

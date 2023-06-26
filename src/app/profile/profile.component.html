@@ -1,27 +1,42 @@
 <div class="mx-auto text-center py-2 sm:py-4 px-3 max-w-xl">
   <div class="flex justify-end sm:mb-4">
-    <button type="button" routerLink="../" class=" bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+    <button type="button" (click)="back()" class=" bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
       <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
   </div>
-  <app-authentication *ngIf="!loggedIn" (authenticated)="reloadAuthenticated()"></app-authentication>
+  <app-authentication *ngIf="!loggedIn" (authenticated)="ngOnInit()"></app-authentication>
   <div *ngIf="loggedIn">
     <div class="flex flex-col justify-center items-center">
-      <p class="text-xl text-gray-600 font-light my-6">Hey {{user.firstName}}!🥳</p>
-
-      <p class="text-gray-600 font-light mb-2">Dein Guthaben:</p>
-      <p class="text-gray-600 font-light">{{user.balance | number:'1.2-2'}}€</p>
+      <p class="text-xl font-light my-6">Hey {{user.firstName}}!🥳</p>
+    </div>
+    <div class="flex flex-col gap-3 max-w-md mx-auto justify-center">
+      <div *ngIf="user.balances.length == 0" class="w-44 mx-auto text-gray-400 font-extralight">Buy your first drink in a kitchen and see your balance listed here!</div>
+      <div *ngFor="let balance of user.balances" class="rounded-xl shadow-md shadow-secondary hover:shadow-rose-300 duration-150 p-2">
+        <div (click)="selectBalance(balance)" class="grid grid-cols-3 h-12 cursor-pointer">
+          <div class="font-light text-gray-700 my-auto">{{ balance.kitchen }}</div>
+          <div class="font-light my-auto" [class.text-positive]="balance.balance > 0" [class.text-negative]="balance.balance < 0">{{ balance.balance | number: '.2'}}€</div>
+          <a *ngIf="balance.link" [attr.href]="balance.link"><button class="bg-[#003087] hover:bg-opacity-90 text-white ring-1 ring-gray-300 opacity-100">PayPal</button></a>
+        </div>
+        <div *ngIf="balance === selectedBalance">
+          <hr class="m-2">
+          <div class="grid gap-2">
+            <div *ngFor="let entry of history; let i = index" class="grid grid-cols-3 font-light text-gray-400 text-sm">
+              <div>{{entry.date | date:'dd/MM HH:mm'}}</div>
+              <div>{{ entry.amount | number: '.2'}}€</div>
+              <div class="flex flex-col gap-2">
+                <p *ngFor="let beverage of entry.beverages">{{beverage.count}}x {{beverage.name}} ({{beverage.price | number: '.2'}}€)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="grid justify-center gap-2 mt-5">
-      <a [attr.href]="payPalLink"><button class="bg-[#003087] hover:bg-opacity-90 text-white ring-1 ring-gray-300 opacity-100 w-full">Schulden begleichen</button></a>
-      <button *ngIf="user.manager" routerLink="../dashboard" class="bg-secondary hover:bg-rose-300 text-white">Dashboard</button>
       <div class="flex flex-row gap-2">
-        <button class="bg-white hover:bg-neutral-100 text-gray-400 ring-1 ring-gray-300" (click)="toggleHide()">{{(user.hide) ? 'Show' : 'Hide'}} Profile</button>
         <button class="bg-white hover:bg-neutral-100 text-gray-400 ring-1 ring-gray-300" (click)="logout()">Logout</button>
       </div>
-    </div>
   </div>
 </div>

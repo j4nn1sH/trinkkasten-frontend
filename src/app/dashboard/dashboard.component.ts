@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { ShopService } from '../shop.service';
-import { AuthenticationService } from '../authentication.service';
 import { Chart, ChartEvent, ActiveElement, ChartData } from 'chart.js/auto';
 import { FormControl } from '@angular/forms';
+import { Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,7 +11,11 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
-  beverages: any[] = [];
+  kitchen: any = {};
+  name = new FormControl();
+  link = new FormControl();
+  newManagerMail = new FormControl();
+
   users: any[] = ["Hilfe"];
   chart: any;
   beverageName = new FormControl();
@@ -21,13 +26,40 @@ export class DashboardComponent {
   selectedUser: any;
   moneyAmount: FormControl<number> = new FormControl();
 
+
   constructor(
+    private location: Location,
     private shopService: ShopService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.getBeverages();
-    this.getUsers();
+    this.getKitchen();
+  }
+
+  getKitchen() {
+    this.shopService.getKitchen(this.route.snapshot.paramMap.get('kitchen')!).subscribe((data) => {
+      this.kitchen = data;
+      this.name.setValue(this.kitchen.name);
+      this.link.setValue(this.kitchen.link);
+      this.createChart();
+      console.log(this.kitchen.users)
+    });
+  }
+
+  update() {
+    console.log(this.kitchen)
+    this.shopService.updateKitchen(this.kitchen).subscribe((data) => {
+      this.kitchen = data;
+      this.selectedBeverage = null;
+      this.beverageName.reset();
+      this.beveragePrice.reset();
+    });
+  }
+
+  editLink() {
+    this.kitchen.link = this.link.value;
+    this.update();
   }
 
   createBeverage() {
@@ -37,12 +69,12 @@ export class DashboardComponent {
     if(this.beveragePrice.value === null || this.beveragePrice.value === undefined || this.beveragePrice.value === 0) {
       return
     }
-    this.shopService.addBeverage(this.beverageName.value, this.beveragePrice.value).subscribe((data) => {
-      this.beverages.push(data);
-      this.selectedBeverage = null;
-      this.beverageName.reset();
-      this.beveragePrice.reset();
+    this.kitchen.beverages.push({
+      name: this.beverageName.value,
+      price: this.beveragePrice.value,
+      active: true
     });
+    this.update();
   }
 
   selectBeverage(beverage: any) {
@@ -58,76 +90,50 @@ export class DashboardComponent {
   }
 
   updateBeverage() {
-    console.log(this.beverageName.value + " - " + this.beveragePrice.value)
     if(this.beverageName.value === null && this.beveragePrice.value === null) {
       return
     }
-    this.shopService.updateBeverage(this.selectedBeverage._id, this.beverageName.value, this.beveragePrice.value).subscribe((data) => {
-      this.beverages = this.beverages.map((beverage: any) => {
-        if (beverage._id === this.selectedBeverage._id) {
-          return data;
-        } else {
-          return beverage;
-        }
-      });
-      this.selectedBeverage = null;
-      this.beverageName.reset();
-      this.beveragePrice.reset();
+    this.kitchen.beverages = this.kitchen.beverages.map((beverage: any) => {
+      if (beverage._id === this.selectedBeverage._id) {
+        beverage.name = this.beverageName.value;
+        beverage.price = this.beveragePrice.value;
+      }
+      return beverage;
     });
+    this.update();
   }
 
   toggleActive() {
-    this.shopService.toggleActive(this.selectedBeverage._id).subscribe((data) => {
-      this.beverages = this.beverages.map((beverage: any) => {
-        if (beverage._id === this.selectedBeverage._id) {
-          return data;
-        } else {
-          return beverage;
-        }
-      });
-      this.selectedBeverage = null;
-      this.beverageName.reset();
-      this.beveragePrice.reset();
+    this.kitchen.beverages = this.kitchen.beverages.map((beverage: any) => {
+      if (beverage._id === this.selectedBeverage._id) {
+        beverage.active = !beverage.active;
+      }
+      return beverage;
     });
+    this.update();
   }
 
   deleteBeverage() {
-    console.log(this.selectedBeverage._id)
-    this.shopService.deleteBeverage(this.selectedBeverage._id).subscribe(() => {
-      this.beverages = this.beverages.filter((beverage: any) => {
-        return beverage._id !== this.selectedBeverage._id;
-      });
-      this.selectedBeverage = null;
-      this.beverageName.reset();
-      this.beveragePrice.reset();
+    this.kitchen.beverages = this.kitchen.beverages.filter((beverage: any) => {
+      return beverage._id !== this.selectedBeverage._id;
     });
+    this.update();
   }
 
-  getUsers() {
-    this.shopService.getAllUsers().subscribe((data) => {
-      this.users = data;
-      this.createChart();
-    });
-  }
-
-  getBeverages() {
-    this.shopService.getAllBeverages().subscribe((data) => {
-      this.beverages = data.map((beverage: any) => {
-        beverage.amount = 0;
-        return beverage;
-      });
-    });
+  addManager() {
+    console.log("addManager")
+    // TODO: Add manager
   }
 
   createChart(){
     const chartData: ChartData = {// values on X-Axis
-      labels: this.users.map((user: any) => user.firstName),
+      labels: this.kitchen.users.map((user: any) => user.user.firstName),
        datasets: [
         {
           label: "Bilanz",
-          data: this.users.map((user: any) => user.balance.toFixed(2)),
-          backgroundColor: this.users.map((user: any) => user.balance < 0 ? "rgba(241, 131, 131, 0.2)" : "rgba(154, 226, 130, 0.2)"),
-          borderColor: this.users.map((user: any) => user.balance < 0 ? "#FF6384" : "#9AE282"),
+          data: this.kitchen.users.map((user: any) => user.balance.toFixed(2)),
+          backgroundColor: this.kitchen.users.map((user: any) => user.balance < 0 ? "rgba(241, 131, 131, 0.2)" : "rgba(154, 226, 130, 0.2)"),
+          borderColor: this.kitchen.users.map((user: any) => user.balance < 0 ? "#FF6384" : "#9AE282"),
           borderWidth: 2
         }
       ]
@@ -151,29 +157,27 @@ export class DashboardComponent {
           chart: Chart<'bar'>
         ) => {
           if (elements[0]) {
-            this.selectedUser = this.users[elements[0].index];
+            this.selectedUser = this.kitchen.users[elements[0].index];
           }
         },
       }
     });
   }
 
-  addMoney() {
+  pay() {
     if(this.moneyAmount.value === null || this.moneyAmount.value === undefined || this.moneyAmount.value === 0) {
       return
     }
-    this.shopService.addMoney(this.selectedUser._id, this.moneyAmount.value).subscribe((data) => {
-      this.selectedUser = data;
-      this.users = this.users.map((user: any) => {
-        if (user._id === this.selectedUser._id) {
-          user = this.selectedUser;
-        }
-        return user;
-      });
-      this.moneyAmount.reset();
+    this.shopService.pay(this.kitchen.name, this.selectedUser.user, this.moneyAmount.value).subscribe((data) => {
       this.chart.destroy();
-      this.createChart();
+      this.getKitchen();
+      this.selectedUser = null;
+      this.moneyAmount.reset();
     }
     );
+  }
+
+  back() {
+    this.location.back();
   }
 }
