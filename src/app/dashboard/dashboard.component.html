@@ -15,6 +15,7 @@
   </div>
   <div class="grid md:grid-cols-2 gap-8">
     <div class="flex flex-wrap gap-3 justify-center h-fit mt-12">
+      <div *ngIf="kitchen.beverages.length == 0" class="w-44 mx-auto text-gray-400 font-extralight">Drinks will be listed here. Just create a new one down bellow!</div>
       <div *ngFor="let beverage of kitchen.beverages" (click)="selectBeverage(beverage)" [class.bg-positive]="beverage.active" [class.ring-primary]="selectedBeverage == beverage" class="group ring-2 ring-gray-300 hover:ring-primary active:scale-105 duration-150 w-32 aspect-square rounded-3xl select-none cursor-default touch-manipulation bg-opacity-10">
         <div class="flex flex-col justify-center items-center h-full">
           <p class="text-xl text-gray-700 font-light">{{beverage.name}}</p>

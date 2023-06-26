@@ -1,9 +1,10 @@
 <div class="mx-auto text-center sm:py-4 max-w-xl">
   <div class="sticky top-0 text-center p-4 bg-white">
     <h1 class="font-mono text-5xl">Trinkkasten</h1>
-    <p class="text-slate-400">In welcher Küche bist du?</p>
+    <p class="text-slate-400">Which kitchen are you in?</p>
   </div>
   <div class="mt-8 w-[20em] gap-2 grid grid-cols-2 mx-auto">
+    <div *ngIf="names.length == 0" class="col-span-2 w-52 pb-8 mx-auto text-gray-400 font-extralight">Be the first to create a kitchen! Just login or register by clicking on PROFILE and then click on CREATE</div>
     <button *ngFor="let name of names" routerLink="./{{name}}" class="col-span-2">{{ name }}</button>
     <button button class="bg-white text-amber-400 ring-1 ring-amber-300 hover:bg-amber-300 hover:bg-opacity-10 text-xl" routerLink="./profile">PROFILE</button>
     <button button class="bg-white text-primary ring-1 ring-primary hover:bg-primary hover:bg-opacity-10 text-xl" routerLink="./create">CREATE</button>
