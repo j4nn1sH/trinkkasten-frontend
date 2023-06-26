@@ -12,6 +12,9 @@ import { AuthenticationComponent } from './authentication/authentication.compone
 import { ProfileComponent } from './profile/profile.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LayoutComponent } from './layout/layout.component';
+import { StatisticsComponent } from './statistics/statistics.component';
+import { CreateComponent } from './create/create.component';
+import { ListComponent } from './list/list.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +23,10 @@ import { LayoutComponent } from './layout/layout.component';
     AuthenticationComponent,
     ProfileComponent,
     DashboardComponent,
-    LayoutComponent
+    LayoutComponent,
+    StatisticsComponent,
+    CreateComponent,
+    ListComponent
   ],
   imports: [
     BrowserModule,

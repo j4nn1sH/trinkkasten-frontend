@@ -6,6 +6,6 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./layout.component.css']
 })
 export class LayoutComponent {
+  @Input() title = "";
   @Input() description = "";
-
 }

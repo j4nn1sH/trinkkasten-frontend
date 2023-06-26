@@ -13,8 +13,8 @@ module.exports = {
       colors: {
         "primary": "#34d399",
         "secondary": "#fecdd3",
-        "positive": "#9ae282",
-        "negative": "#F18383",
+        "positive": "#5cb85c",
+        "negative": "#d9534f",
       }
     },
   },

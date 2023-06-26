@@ -1,6 +1,6 @@
 <div class="mx-auto text-center py-2 sm:py-4 px-3 max-w-xl">
   <div class="flex justify-end sm:mb-4">
-    <button type="button" routerLink="../" class=" bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+    <button type="button" (click)="back()" class=" bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
       <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
@@ -8,22 +8,26 @@
   </div>
 </div>
 <div class="mx-auto text-center py-2 sm:py-4 px-3 max-w-5xl">
-  <h1 class="text-[2.7em] font-mono sm:mb-2">Dashboard</h1>
+  <h1 class="text-[2.7em] font-mono sm:mb-2">Dashboard {{kitchen.name}}</h1>
   <!-- Input fields to add new beverage -->
-  <div class="grid md:grid-cols-2">
-    <div class="flex flex-wrap gap-3 justify-center mt-4">
-      <div *ngFor="let beverage of beverages" (click)="selectBeverage(beverage)" [class.bg-positive]="beverage.active" [class.ring-primary]="selectedBeverage == beverage" class="group ring-2 ring-gray-300 hover:ring-primary active:scale-105 duration-150 w-32 aspect-square rounded-3xl select-none cursor-default touch-manipulation bg-opacity-10">
+  <div class="mt-8 w-[20em] gap-2 grid grid-cols-2 mx-auto">
+    <!-- <input type="text" placeholder="Name..." [formControl]="name" class="col-span-2"> -->
+  </div>
+  <div class="grid md:grid-cols-2 gap-8">
+    <div class="flex flex-wrap gap-3 justify-center h-fit mt-12">
+      <div *ngFor="let beverage of kitchen.beverages" (click)="selectBeverage(beverage)" [class.bg-positive]="beverage.active" [class.ring-primary]="selectedBeverage == beverage" class="group ring-2 ring-gray-300 hover:ring-primary active:scale-105 duration-150 w-32 aspect-square rounded-3xl select-none cursor-default touch-manipulation bg-opacity-10">
         <div class="flex flex-col justify-center items-center h-full">
           <p class="text-xl text-gray-700 font-light">{{beverage.name}}</p>
           <p class="text-gray-400">{{beverage.price | number:'1.2'}}€</p>
         </div>
       </div>
     </div>
-    <div class="p-12">
+    <div class="flex flex-col gap-8 mt-12 px-16">
       <div class="grid grid-cols-2 gap-2">
+        <!-- {{ selectedBeverage | json }} -->
         <input type="text" placeholder="Getränkename..." [formControl]="beverageName" class="col-span-2">
         <div class="col-span-1 relative w-full">
-          <input type="number" step="0.01" [formControl]="beveragePrice" class="w-full p-2 pr-7 text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+          <input type="number" step="0.01" [formControl]="beveragePrice" class="w-full text-left [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
           <p class="absolute top-1/2 right-2 -translate-x-1/2 -translate-y-1/2 text-neutral-400">€</p>
         </div>
         <button *ngIf="selectedBeverage" class="col-span-1 py-2 rounded-md" (click)="updateBeverage()">Update</button>
@@ -31,9 +35,18 @@
         <button *ngIf="selectedBeverage" class="col-span-1 py-2 rounded-md bg-red-500" (click)="deleteBeverage()">Delete</button>
         <button *ngIf="!selectedBeverage" class="col-span-1 py-2 rounded-md" (click)="createBeverage()">Create</button>
       </div>
+      <div class="grid grid-cols-3 gap-2">
+        <input type="text" id="link" placeholder="PayPal Link..." [formControl]="link" class="col-span-2">
+        <button [class.bg-gray-300]="kitchen.link == link.value" class="col-span-1 py-2 rounded-md" (click)="editLink()">Update</button>
+      </div>
+      <!-- <div class="grid grid-cols-3 gap-2">
+        <input type="email" id="newManagerMail" placeholder="New Manager (Mail)..." [formControl]="newManagerMail" class="col-span-2">
+        <button [class.bg-gray-300]="!newManagerMail.value" class="col-span-1 py-2 rounded-md" (click)="addManager()">Add</button>
+        <p class="col-span-3">List of Managers:</p>
+      </div> -->
     </div>
   </div>
-  <div class="mt-12">
+  <div class="mt-8">
     <canvas id="MyChart" >{{ chart }}</canvas>
   </div>
   <div class="h-52">
@@ -45,7 +58,7 @@
           <input type="number" step="0.01" [formControl]="moneyAmount" class="p-2 pr-7 w-20 text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
           <p class="absolute top-1/2 right-2 -translate-x-1/2 -translate-y-1/2 text-neutral-400">€</p>
         </div>
-        <img src="assets/arrow-right.svg" (click)="addMoney()" class="h-10 rounded-md hover:bg-primary hover:bg-opacity-25 cursor-pointer">
+        <img src="assets/arrow-right.svg" (click)="pay()" class="h-10 rounded-md hover:bg-primary hover:bg-opacity-25 cursor-pointer">
       </div>
     </div>
   </div>
