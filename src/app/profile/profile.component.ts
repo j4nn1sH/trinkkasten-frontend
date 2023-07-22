@@ -42,7 +42,7 @@ export class ProfileComponent {
   getBalances() {
     this.shopService.getUserBalances().subscribe((data) => {
       this.user.balances = data;
-      console.log(data)
+      console.log(this.user.balances)
     });
   }
 
@@ -55,6 +55,12 @@ export class ProfileComponent {
       this.history = data
       this.selectedBalance = balance;
     })
+  }
+
+  toggleHide(kitchenName: String) {
+    this.shopService.toggleHide(kitchenName).subscribe(() => {
+      this.ngOnInit();
+    });
   }
 
   back() {

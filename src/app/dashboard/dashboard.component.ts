@@ -16,7 +16,6 @@ export class DashboardComponent {
   link = new FormControl();
   newManagerMail = new FormControl();
 
-  users: any[] = ["Hilfe"];
   chart: any;
   beverageName = new FormControl();
   beveragePrice = new FormControl();
@@ -43,7 +42,7 @@ export class DashboardComponent {
       this.name.setValue(this.kitchen.name);
       this.link.setValue(this.kitchen.link);
       this.createChart();
-      console.log(this.kitchen.users)
+      console.log(this.kitchen)
     });
   }
 
@@ -51,7 +50,6 @@ export class DashboardComponent {
     console.log(this.kitchen)
     this.shopService.updateKitchen(this.kitchen).subscribe((data) => {
       this.kitchen = data;
-      this.selectedBeverage = null;
       this.beverageName.reset();
       this.beveragePrice.reset();
     });
@@ -120,17 +118,52 @@ export class DashboardComponent {
     this.update();
   }
 
-  addManager() {
-    console.log("addManager")
-    // TODO: Add manager
+  promote(user: any) {
+    if(!user) return
+    this.kitchen.managers.push(user._id);
+    this.update();
+  }
+
+  demote(user: any) {
+    if(!user) return
+    if(this.kitchen.managers.length === 1) {
+      return
+    }
+    this.kitchen.managers = this.kitchen.managers.filter((manager: any) => {
+      return manager !== user._id;
+    });
+    this.update();
+  }
+
+  deleteUser(user: any) {
+    if(!user) return
+    this.kitchen.users = this.kitchen.users.filter((u: any) => {
+      return u.user._id !== user._id;
+    });
+    this.update();
+  }
+
+  isManager(u: any) {
+    if(!u) {
+      return false;
+    }
+    return this.kitchen.managers.includes(u._id);
+  }
+
+  selectUser(user: any) {
+    if(this.selectedUser != user) {
+      this.selectedUser = user
+    } else {
+      this.selectedUser = null
+    }
   }
 
   createChart(){
     const chartData: ChartData = {// values on X-Axis
-      labels: this.kitchen.users.map((user: any) => user.user.firstName),
+      labels: this.kitchen.users.map((user: any) => user.user.firstName + " " + user.user.lastName),
        datasets: [
         {
-          label: "Bilanz",
+          label: "Bilance",
           data: this.kitchen.users.map((user: any) => user.balance.toFixed(2)),
           backgroundColor: this.kitchen.users.map((user: any) => user.balance < 0 ? "rgba(241, 131, 131, 0.2)" : "rgba(154, 226, 130, 0.2)"),
           borderColor: this.kitchen.users.map((user: any) => user.balance < 0 ? "#FF6384" : "#9AE282"),
@@ -143,6 +176,7 @@ export class DashboardComponent {
       type: 'bar', //this denotes tha type of chart
       data: chartData,
       options: {
+        maintainAspectRatio: false,
         responsive: true,
         onHover: (
           event: ChartEvent,
@@ -164,7 +198,7 @@ export class DashboardComponent {
     });
   }
 
-  pay() {
+  pay() { // TODO Description mit anhängen
     if(this.moneyAmount.value === null || this.moneyAmount.value === undefined || this.moneyAmount.value === 0) {
       return
     }
