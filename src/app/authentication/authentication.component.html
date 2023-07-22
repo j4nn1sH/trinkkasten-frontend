@@ -22,7 +22,7 @@
       <input class="col-span-2" type="password" placeholder="Confirm password..." [formControl]="confirm_password" id="confirm_password" name="confirm_password"
               onchange="this.setCustomValidity((this.value != new_password.value) ? 'Please enter the same Password as above' : '');" [required]="submitRegister">
 
-      <p class="col-span-2 text-xs text-gray-300 my-2 px-2">By registering you agree to our privacy policy and terms of use.!</p>
+      <p class="col-span-2 text-xs text-gray-300 my-2 px-2">By registering you agree to our privacy policy and terms of use!</p>
 
       <input class="col-span-2 mt-2" type="submit" value="Continue" (click)="register(firstName.value, lastName.value, email.value, new_password.value, confirm_password.value)" id="register" name="register">
     </div>

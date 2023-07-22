@@ -18,8 +18,8 @@
       <div *ngIf="kitchen.beverages.length == 0" class="w-44 mx-auto text-gray-400 font-extralight">Drinks will be listed here. Just create a new one down bellow!</div>
       <div *ngFor="let beverage of kitchen.beverages" (click)="selectBeverage(beverage)" [class.bg-positive]="beverage.active" [class.ring-primary]="selectedBeverage == beverage" class="group ring-2 ring-gray-300 hover:ring-primary active:scale-105 duration-150 w-32 aspect-square rounded-3xl select-none cursor-default touch-manipulation bg-opacity-10">
         <div class="flex flex-col justify-center items-center h-full">
-          <p class="text-xl text-gray-700 font-light">{{beverage.name}}</p>
-          <p class="text-gray-400">{{beverage.price | number:'1.2'}}€</p>
+          <p class="text-xl text-gray-700 font-light">{{ beverage.name }}</p>
+          <p class="text-gray-400">{{ beverage.price | number:'1.2' }}€</p>
         </div>
       </div>
     </div>
@@ -37,7 +37,7 @@
         <button *ngIf="!selectedBeverage" class="col-span-1 py-2 rounded-md" (click)="createBeverage()">Create</button>
       </div>
       <div class="grid grid-cols-3 gap-2">
-        <input type="text" id="link" placeholder="PayPal Link..." [formControl]="link" class="col-span-2">
+        <input type="text" id="link" placeholder="PayPal Link..." [formControl]="link" class="text-gray-600 col-span-2">
         <button [class.bg-gray-300]="kitchen.link == link.value" class="col-span-1 py-2 rounded-md" (click)="editLink()">Update</button>
       </div>
       <!-- <div class="grid grid-cols-3 gap-2">
@@ -48,13 +48,25 @@
     </div>
   </div>
   <div class="mt-8">
-    <canvas id="MyChart" >{{ chart }}</canvas>
+    <canvas class="h-[20em]" id="MyChart" >{{ chart }}</canvas>
   </div>
-  <div class="h-52">
+  <div class="h-52 grid grid-cols-2">
+    <div class="flex font-light flex-col justify-center items-center gap-2">
+      <div class="grid grid-cols-2 gap-2">
+        <button *ngIf="!selectedUser || !isManager(selectedUser.user)" class="col-span-1 py-2 rounded-md bg-amber-400" (click)="promote(selectedUser.user)">Promote</button>
+        <button *ngIf="selectedUser && isManager(selectedUser.user)" class="col-span-1 py-2 rounded-md bg-white ring-amber-400 ring-1 text-amber-400" (click)="demote(selectedUser.user)">Demote</button>
+        <button class="col-span-1 py-2 rounded-md bg-red-500" (click)="deleteUser(selectedUser.user)">Delete</button>
+      </div>
+      <div *ngFor="let u of kitchen.users" (click)="selectUser(u)" [class.ring-primary]="selectedUser == u" [class.text-primary]="selectedUser == u" class="w-72 flex justify-evenly items-center cursor-pointer px-2 py-1 ring-1 ring-gray-300 hover:ring-primary active:scale-105 duration-150 rounded-md text-gray-400">
+        <p>{{u.user.firstName}} {{u.user.lastName}}</p>
+        <p class="text-negative" [class.text-positive]="u.balance >= 0">{{u.balance | number:'1.2-2'}}€</p>
+        <img [class.invisible]="!isManager(u.user)" src="./assets/star-active.png" class="w-6" alt="">
+      </div>
+    </div>
     <div *ngIf="selectedUser" class="flex flex-col justify-center items-center mt-8">
-      <p class="text-xl text-gray-600 font-light mb-2">{{selectedUser.firstName}} {{selectedUser.lastName}}</p>
-      <p class="font-light text-negative" [class.text-positive]="selectedUser.balance >= 0">{{selectedUser.balance | number:'1.2-2'}}€</p>
-      <div class="flex gap-3 mt-6">
+      <p class="text-xl text-gray-600 mb-2 font-medium">{{selectedUser.user.firstName}} {{selectedUser.user.lastName}}</p>
+      <div class="flex items-center gap-5 mt-6">
+        <p class="font-light text-negative" [class.text-positive]="selectedUser.balance >= 0">{{selectedUser.balance | number:'1.2-2'}}€</p>
         <div class="relative h-fit w-fit">
           <input type="number" step="0.01" [formControl]="moneyAmount" class="p-2 pr-7 w-20 text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
           <p class="absolute top-1/2 right-2 -translate-x-1/2 -translate-y-1/2 text-neutral-400">€</p>

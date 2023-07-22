@@ -4,8 +4,6 @@ import { AuthenticationService } from '../authentication.service';
 import { ShopService } from '../shop.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
-
-
 @Component({
   selector: 'app-shop',
   templateUrl: './shop.component.html',
@@ -44,13 +42,15 @@ export class ShopComponent {
   getKitchen() {
     this.shopService.getKitchen(this.route.snapshot.paramMap.get('kitchen')!).subscribe((data) => {
       data.beverages = data.beverages
-        .filter((beverage: any) => !beverage.hidden)
+        .filter((beverage: any) => beverage.active)
         .map((beverage: any) => {
           beverage.amount = 0;
           return beverage;
         });
       this.kitchen = data;
-      this.users = data.users.filter((user: any) => !user.hidden).map(
+      this.users = data.users
+      .filter((user: any) => !user.hide)
+      .map(
         (user: any) => {
           var balance = user.balance.toFixed(2);
           user = user.user

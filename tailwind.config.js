@@ -15,6 +15,7 @@ module.exports = {
         "secondary": "#fecdd3",
         "positive": "#5cb85c",
         "negative": "#d9534f",
+        "muted" : "#6c757d",
       }
     },
   },

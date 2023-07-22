@@ -73,7 +73,7 @@ export class ShopService {
   }
 
   getUserHistory(kitchenName: String) {
-    return this.http.get(API_URL + '/user/history/' + kitchenName)
+    return this.http.get(API_URL + '/user/' + kitchenName + '/history')
   }
 
   getUsers(): Observable<any> {
@@ -95,12 +95,8 @@ export class ShopService {
     }, httpOptions);
   }
 
-  toggleHide(): Observable<any> {
-    return this.http.put(API_URL + '/user/toggleHide', httpOptions);
-  }
-
-  toggleActive(beverageId: String): Observable<any> {
-    return this.http.put(API_URL + '/shop/beverages/' + beverageId + "/toggleActive", httpOptions);
+  toggleHide(kitchenName: String): Observable<any> {
+    return this.http.put(API_URL + '/user/' + kitchenName + '/toggleHide', httpOptions);
   }
 
   getPayLink(): Observable<any> {

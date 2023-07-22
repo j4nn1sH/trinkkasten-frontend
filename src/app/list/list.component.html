@@ -7,6 +7,6 @@
     <div *ngIf="names.length == 0" class="col-span-2 w-52 pb-8 mx-auto text-gray-400 font-extralight">Be the first to create a kitchen! Just login or register by clicking on PROFILE and then click on CREATE</div>
     <button *ngFor="let name of names" routerLink="./{{name}}" class="col-span-2">{{ name }}</button>
     <button button class="bg-white text-amber-400 ring-1 ring-amber-300 hover:bg-amber-300 hover:bg-opacity-10 text-xl" routerLink="./profile">PROFILE</button>
-    <button button class="bg-white text-primary ring-1 ring-primary hover:bg-primary hover:bg-opacity-10 text-xl" routerLink="./create">CREATE</button>
+    <button button class="bg-white text-primary ring-1 ring-primary hover:bg-primary hover:bg-opacity-10 text-xl" [class.button-muted]="!loggedIn" routerLink="./create">CREATE</button>
   </div>
 </div>
