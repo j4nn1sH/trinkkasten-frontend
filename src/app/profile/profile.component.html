@@ -17,7 +17,9 @@
         <div (click)="selectBalance(balance)" class="grid grid-cols-3 h-12 cursor-pointer">
           <div class="font-light text-gray-700 my-auto">{{ balance.kitchen }}</div>
           <div class="font-light my-auto" [class.text-positive]="balance.balance > 0" [class.text-negative]="balance.balance < 0">{{ balance.balance | number: '.2'}}€</div>
-          <a *ngIf="balance.link" [attr.href]="balance.link"><button class="bg-[#003087] hover:bg-opacity-90 text-white ring-1 ring-gray-300 opacity-100">PayPal</button></a>
+          <div>
+            <a *ngIf="balance.link" [attr.href]="balance.link" class="w-fit h-fit rounded-xl"><button class="bg-[#003087] hover:bg-opacity-90 text-white ring-1 ring-gray-300 opacity-100">PayPal</button></a>
+          </div>
         </div>
         <div *ngIf="balance === selectedBalance">
           <hr class="m-2">
