@@ -45,24 +45,26 @@ export class AuthenticationService {
   }
 
   setToken(res: any): void {
-    const expiresAt = String(Date.now() + res.expiresIn * 1000);
+    // const expiresAt = String(Date.now() + res.expiresIn * 1000);
 
     localStorage.setItem('auth-token', res.token);
-    localStorage.setItem('expiresAt', expiresAt);
+    // localStorage.setItem('expiresAt', expiresAt);
   }
 
   getToken(): string | null {
-    if(!localStorage.getItem('auth-token') || !localStorage.getItem('expiresAt')) {
-      return null;
-    } else if(Date.now() > Number(localStorage.getItem('expiresAt'))) {
-      this.clearToken();
+    //if(!localStorage.getItem('auth-token') || !localStorage.getItem('expiresAt')) {
+    if(!localStorage.getItem('auth-token')) {
       return null;
     }
+    // else if(Date.now() > Number(localStorage.getItem('expiresAt'))) {
+    //   this.clearToken();
+    //   return null;
+    // }
     return localStorage.getItem('auth-token');
   }
 
   clearToken(): void {
     localStorage.removeItem('auth-token');
-    localStorage.removeItem('expiresAt');
+    // localStorage.removeItem('expiresAt');
   }
 }
