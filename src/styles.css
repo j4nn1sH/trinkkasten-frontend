@@ -3,7 +3,11 @@
 @tailwind utilities;
 
 input {
-  @apply p-2 bg-transparent ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:ring-opacity-50 rounded-md text-gray-700 font-light outline-none invalid:ring-rose-500 appearance-none
+  @apply p-2 bg-transparent ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:ring-opacity-50 rounded-md text-gray-700 font-light outline-none invalid:ring-rose-500 appearance-none;
+}
+
+input, textarea {
+  transform: perspective(1px);
 }
 
 input[type="submit"] {
