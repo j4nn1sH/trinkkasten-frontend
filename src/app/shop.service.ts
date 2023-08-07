@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Shop, User } from './models';
 
 const API_URL = environment.API_URL;
 
@@ -18,92 +19,62 @@ export class ShopService {
     private http: HttpClient,
   ) { }
 
-  createKitchen(name: String): Observable<any> {
+  // Shop
+  createShop(name: String): Observable<any> {
     return this.http.post(API_URL + '/shop', {
       name: name
     }, httpOptions);
   }
 
-  getKitchen(name: String): Observable<any> {
-    return this.http.get(API_URL + '/shop/' + name);
-  }
-
-  updateKitchen(kitchen: any) {
-    return this.http.put(API_URL + '/shop/' + kitchen.name, {
-      kitchen
-    }, httpOptions);
-  }
-
-  getKitchenList(): Observable<any> {
+  getShopList(): Observable<any> {
     return this.http.get(API_URL + '/shop');
   }
 
-  addBeverage(kitchenName: String, name: String, price: Number): Observable<any> {
-    return this.http.post(API_URL + '/shop/' + kitchenName, {
-      name: name,
-      price: price,
-      active: true
+  getShop(shop_id: String): Observable<any> {
+    return this.http.get(API_URL + '/shop/' + shop_id);
+  }
+
+  updateShop(shop: Shop) {
+    return this.http.put(API_URL + '/shop/' + shop._id, {
+      shop: shop
     }, httpOptions);
   }
 
-  updateBeverage(kitchenName: String, beverageId: String, name: String, price: Number): Observable<any> {
-    return this.http.put(API_URL + '/shop/' + kitchenName + '/' + beverageId, {
-      name: name,
-      price: price
+  deleteShop(shop_id: String): Observable<any> {
+    return this.http.delete(API_URL + '/shop/' + shop_id);
+  }
+
+  // Buy / Pay
+  buy(shop_id: String, users: User[], items: any[]): Observable<any> {
+    return this.http.post(API_URL + '/shop/' + shop_id, {
+      users: users,
+      items: items
     }, httpOptions);
   }
 
-  deleteBeverage(kitchenName: String, beverageId: String): Observable<any> {
-    return this.http.delete(API_URL + '/shop/' + kitchenName + '/' + beverageId, httpOptions);
-  }
-
-  getBeverages(): Observable<any> {
-    return this.http.get(API_URL + '/shop/beverages');
-  }
-
-  getAllBeverages(): Observable<any> {
-    return this.http.get(API_URL + '/shop/beverages/all');
-  }
-
-  buyBeverages(kitchenName: String, user_id: String, beverages: Object[]): Observable<any> {
-    return this.http.post(API_URL + '/shop/' + kitchenName, {
-      user_id: user_id,
-      beverages: beverages
-    }, httpOptions);
-  }
-
-  getUserHistory(kitchenName: String) {
-    return this.http.get(API_URL + '/user/' + kitchenName + '/history')
-  }
-
-  getUsers(): Observable<any> {
-    return this.http.get(API_URL + '/user');
-  }
-
-  getAllUsers(): Observable<any> {
-    return this.http.get(API_URL + '/user/all');
-  }
-
-  getUserBalances(): Observable<any> {
-    return this.http.get(API_URL + '/user/balances');
-  }
-
-  pay(kitchen_id: String, user_id: String, amount: Number): Observable<any> {
-    return this.http.post(API_URL + '/shop/' + kitchen_id +'/pay', {
+  pay(shop_id: String, user_id: String, amount: Number): Observable<any> {
+    return this.http.post(API_URL + '/shop/' + shop_id +'/pay', {
       user_id: user_id,
       amount: amount
     }, httpOptions);
   }
 
-  toggleHide(kitchenName: String): Observable<any> {
-    return this.http.put(API_URL + '/user/' + kitchenName + '/toggleHide', httpOptions);
+
+  // Profile
+  getBalanceList(): Observable<any> {
+    return this.http.get(API_URL + '/user/balances');
   }
 
-  getPayLink(): Observable<any> {
-    return this.http.get(API_URL + '/shop/link', httpOptions);
+  getHistory(shop_id: String) {
+    return this.http.get(API_URL + '/user/' + shop_id + '/history')
   }
 
-  isManager(kitchenName: String): Observable<any> {
-    return this.http.get(API_URL + '/shop/' + kitchenName + '/isManager');
+  toggleHide(shop_id: String): Observable<any> {
+    return this.http.put(API_URL + '/user/' + shop_id + '/toggleHide', httpOptions);
+  }
+
+  // Users
+  isManager(shop_id: String): Observable<any> {
+    return this.http.get(API_URL + '/shop/' + shop_id + '/isManager');
   }
 }

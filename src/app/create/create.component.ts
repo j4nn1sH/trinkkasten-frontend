@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ShopService } from '../shop.service';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-create',
@@ -13,16 +14,20 @@ export class CreateComponent {
 
   constructor(
     private shopService: ShopService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) { }
 
-  createKitchen() {
-    console.log("Create Kitchen " + this.name.value)
+  createShop() {
     if(!this.name.value) {
       return;
     }
-    this.shopService.createKitchen(this.name.value).subscribe((data) => {
-      this.router.navigate([data.name]);
+    this.shopService.createShop(this.name.value).subscribe((data) => {
+      this.router.navigate([data._id]);
     });
+  }
+
+  back() {
+    this.location.back();
   }
 }

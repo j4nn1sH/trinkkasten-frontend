@@ -10,15 +10,19 @@
 
   <div class="max-w-sm mx-auto sm:shadow-md shadow-gray-400 py-12 px-8 rounded-xl">
     <!-- REGISTER -->
-    <div *ngIf="onRegister" class="grid grid-cols-2 gap-2">
+    <div *ngIf="onRegister" class="relative grid grid-cols-2 gap-2">
+      <div class="absolute left-1/2 -mt-9 -ml-7 text-center font-amatic text-[1.15em]">
+        Already have an account? <br> Click on login
+        <img src="assets/arrow-right-down.svg" alt="" class="opacity-70 w-12 rotate-[100deg] ml-5">
+      </div>
       <div class="col-span-2 mb-4 font-mono">
         <h1 class="text-3xl">REGISTER</h1>
-        <p class="text-slate-400 w-fit cursor-pointer" (click)="switchView()">login</p>
+        <p class="text-slate-400 w-fit cursor-pointer hover:text-primary duration-150" (click)="switchView()">login</p>
       </div>
       <input class="col-span-2 sm:col-span-1" type="text" placeholder="First name..." [formControl]="firstName" id="firstName" name="firstName" minlength="2" [required]="submitRegister">
       <input class="col-span-2 sm:col-span-1" type="text" placeholder="Last name..." [formControl]="lastName" id="lastName" name="lastName" minlength="2" [required]="submitRegister">
       <input class="col-span-2" type="email" placeholder="Email..." [formControl]="email" id="email" name="email" [required]="submitRegister">
-      <input class="col-span-2" type="password" placeholder="Password..." [formControl]="new_password" id="new_password" name="new_password" minlength="8" max="15" [required]="submitRegister">
+      <input class="col-span-2" type="password" placeholder="Password..." [formControl]="new_password" id="new_password" name="new_password" [required]="submitRegister">
       <input class="col-span-2" type="password" placeholder="Confirm password..." [formControl]="confirm_password" id="confirm_password" name="confirm_password"
               onchange="this.setCustomValidity((this.value != new_password.value) ? 'Please enter the same Password as above' : '');" [required]="submitRegister">
 
@@ -30,7 +34,7 @@
     <div *ngIf="!onRegister" class="grid grid-cols-2 gap-2">
       <div class="col-span-2 mb-4 font-mono">
         <h1 class="text-3xl">LOGIN</h1>
-        <p class="text-slate-400 w-fit cursor-pointer"  (click)="switchView()">register</p>
+        <p class="text-slate-400 w-fit cursor-pointer hover:text-primary duration-150" (click)="switchView()">register</p>
       </div>
       <input class="col-span-2" type="email" placeholder="Email..." [formControl]="email" id="email" name="email" [required]="submitLogin">
       <input class="col-span-2" type="password" placeholder="Password..." [formControl]="password" id="password" name="password" [required]="submitLogin">

@@ -19,11 +19,11 @@ export class RestrictedGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      return this.shopService.isManager(route.paramMap.get('kitchen')!).pipe(
+      return this.shopService.isManager(route.paramMap.get('shop_id')!).pipe(
         map(data => !!data),
         tap(data => {
           if(!data) {
-            this.router.navigateByUrl('./?Hilfe');
+            this.router.navigateByUrl('./');
             return false
           }
           return true

@@ -8,7 +8,6 @@ module.exports = {
     extend: {
       fontFamily: {
         'amatic': ['Amatic SC', 'cursive'],
-// <link href="https://fonts.googleapis.com/css2?family=Amatic+SC&display=swap" rel="stylesheet">
       },
       colors: {
         "primary": "#34d399",

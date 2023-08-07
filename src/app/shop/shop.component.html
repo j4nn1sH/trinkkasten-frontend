@@ -1,23 +1,30 @@
 <div class="mx-auto text-center sm:py-4 max-w-xl">
+  <div class="max-w-sm my-4 mx-auto bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" [hidden]="errorMessages.length == 0" role="alert">
+    <p *ngFor="let message of errorMessages" class="m-1">{{ message }}</p>
+    <span (click)="errorMessages = []" class="absolute top-0 bottom-0 right-0 px-4 py-4">
+      <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+    </span>
+  </div>
+  <div *ngIf="success" class="max-w-sm my-4 mx-auto bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+    <p class="m-1">Thanks for shopping here!</p>
+    <span (click)="success = false" class="absolute top-0 bottom-0 right-0 px-4 py-4">
+      <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+    </span>
+  </div>
 
   <!-- Select beverage -->
   <section *ngIf="current_section == 0">
-    <app-layout [title]="kitchen.name" description="Choose your drinks:">
-      <div main *ngIf="user.balance < threshold" class="w-full my-4 mx-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl">It's time to pay up!</div>
-      <div main *ngIf="kitchen.beverages.length == 0" class="w-60 py-8 mx-auto text-gray-400 font-extralight">Seems pretty empty here. Ask your Küchenwart to add some beverages!</div>
-      <div main *ngFor="let beverage of kitchen.beverages" (click)="addBeverage(beverage)" class="group ring-2 ring-gray-300 hover:ring-primary active:scale-105 duration-150 w-[45%] max-w-[10em] aspect-square rounded-3xl select-none cursor-default touch-manipulation" [class.ring-gray-400]="beverage.amount > 0">
+    <app-layout [title]="shop.name" description="Choose your drinks:">
+      <div main *ngIf="user && user.balance && user.balance < threshold" class="w-full my-1 mx-8 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl">It's time to pay up!</div>
+      <div main *ngIf="shop.items.length == 0" class="w-60 py-8 mx-auto text-gray-400 font-extralight">Seems pretty empty here. Ask the Shop Manager to add some items!</div>
+      <div main *ngFor="let beverage of shop.items" (click)="addItem(beverage)" class="group ring-2 ring-gray-300 hover:ring-primary active:scale-105 duration-150 w-[45%] max-w-[10em] aspect-square rounded-3xl select-none cursor-default touch-manipulation" [class.ring-gray-400]="beverage.amount > 0">
         <div class="flex flex-col justify-center items-center h-full">
-          <!-- <button type="button" (click)="beverage.amount = -1" class="-mt-8 invisible bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100" [class.group-hover:visible]="beverage.amount > 0">
-            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button> -->
           <p class="text-xl text-gray-700 font-light">{{beverage.name}}</p>
-          <p class="text-gray-400">{{beverage.amount}} - {{beverage.price | number:'1.2'}}€</p>
+          <p class="text-gray-400">{{beverage.amount}} | {{beverage.price | number:'1.2'}}€</p>
         </div>
       </div>
-      <button *ngIf="kitchen.managers.includes(user._id)" button class="bg-white text-blue-600 ring-1 ring-blue-400 hover:ring-blue-500" routerLink="./dashboard">Dashboard</button>
-      <button button class="bg-white text-amber-400 ring-1 ring-amber-300 hover:ring-amber-500 bg-opacity-20" [class.bg-amber-200]="loggedIn" routerLink="../profile">Profile</button>
+      <button *ngIf="user && user.isManager" button class="bg-white text-blue-600 ring-1 ring-blue-400 hover:ring-blue-500" routerLink="./dashboard">Dashboard</button>
+      <button button class="bg-white text-amber-400 ring-1 ring-amber-300 hover:ring-amber-500 bg-opacity-20" [class.bg-amber-200]="user" routerLink="../profile">Profile</button>
       <button button class="bg-white text-gray-400 ring-1 ring-gray-300 hover:ring-gray-500" (click)="ngOnInit()">Reset</button>
       <button button (click)="selectBeverages()">Continue</button>
     </app-layout>
@@ -25,9 +32,8 @@
 
   <!-- Select user -->
   <section *ngIf="current_section == 1">
-    <app-layout [title]="kitchen.name" description="Choose yourself:">
-      <div main *ngIf="users.length == 0" class="w-60 py-8 mx-auto text-gray-400 font-extralight">Your first purchase in a kitchen needs to be made logged in! Afterwards you can also select yourself here.</div>
-      <div main *ngFor="let user of users" (click)="selectUser(user)" class="ring-2 ring-gray-300 hover:ring-primary active:scale-105 duration-150 w-[45%] max-w-[10em] aspect-square rounded-3xl select-none cursor-default touch-manipulation" [class.ring-red-400]="user.balance < threshold">
+    <app-layout [title]="shop.name" description="Choose the people paying:">
+      <div main *ngFor="let user of shop.users" (click)="selectUser(user)" class="ring-2 ring-gray-300 hover:ring-primary active:scale-105 duration-150 w-[45%] max-w-[10em] aspect-square rounded-3xl select-none cursor-default touch-manipulation" [class.ring-gray-400]="selectedUsers.includes(user)">
         <div class="flex flex-col justify-center items-center h-full">
           <div class="flex flex-col justify-center items-center h-full">
             <p class="text-xl text-gray-600 font-light">{{user.firstName}}</p>
@@ -35,28 +41,40 @@
           </div>
         </div>
       </div>
-      <button button class="bg-white text-gray-400 ring-1 ring-gray-300 hover:ring-gray-500" (click)="back()">Back</button>
+      <button button class="bg-white text-gray-400 ring-1 ring-gray-300 hover:ring-gray-500" (click)="stepBack()">Back</button>
+      <button button class="bg-white text-blue-600 ring-1 ring-blue-400 hover:ring-blue-500 bg-opacity-40" [class.bg-blue-400]="multiSelect" (click)="multiSelect = !multiSelect">Split</button>
+      <button button [class.button-muted]="selectedUsers.length == 0" (click)="current_section = current_section + 1">Continue</button>
     </app-layout>
   </section>
 
   <!-- Confirm -->
-  <section *ngIf="current_section == 2">
-    <app-layout [title]="kitchen.name" description="Confirm your selection here:">
+  <section *ngIf="current_section == 2 && selectedUsers">
+    <app-layout [title]="shop.name" description="Confirm your selection:">
       <div main>
-        <p class="text-xl text-gray-600 font-light mb-6">Hey {{selectedUser.firstName}}🥳</p>
+        <p class="text-xl text-gray-600 font-light mb-2">Hey {{user!.firstName}}🥳</p>
+        <div *ngIf="selectedUsers[0] != user && selectedUsers.length == 1" class="text-gray-600 font-light mb-6">
+          <p>The bill is going to</p>
+          <p class="text-gray-400 font-thin">{{selectedUsers[0].firstName}} {{selectedUsers[0].lastName}}</p>
+        </div>
+        <div *ngIf="selectedUsers.length != 1" class="text-gray-600 font-light mb-6">
+          <p>The people splitting the bill are:</p>
+          <div *ngFor="let user of selectedUsers" class="text-gray-400 font-thin">
+            <p>{{user.firstName}} {{user.lastName}}</p>
+          </div>
+        </div>
 
         <div class="md:shadow-md md:w-[20em] w-[17em] my-10 py-8 px-4">
           <div class="text-gray-400 font-light my-2">
-            <div *ngFor="let beverage of selectedBeverages">
-              <p>{{beverage.amount}}x {{beverage.name}} - {{beverage.price | number:'1.2-2'}}€</p>
+            <div *ngFor="let item of selectedItems">
+              <p>{{item.amount}}x {{item.name}} - {{item.price | number:'1.2-2'}}€</p>
             </div>
           </div>
           <hr class="my-3">
-          <p class="text-gray-500 font-light">Total: {{totalPrice | number:'1.2-2'}}€</p>
+          <p class="text-gray-500 font-light">Total: {{totalPrice | number:'1.2-2'}}€<span *ngIf="selectedUsers.length > 1"> / {{selectedUsers.length}} ({{(totalPrice / selectedUsers.length) | number:'1.2-2'}}€)</span></p>
         </div>
       </div>
-      <button button class="bg-white text-gray-400 ring-1 ring-gray-300 hover:ring-gray-500" (click)="back()">Back</button>
-      <button button (click)="confirm()">Passt!</button>
+      <button button class="bg-white text-gray-400 ring-1 ring-gray-300 hover:ring-gray-500" (click)="stepBack()">Back</button>
+      <button button (click)="confirm()">Confirm</button>
     </app-layout>
   </section>
 </div>

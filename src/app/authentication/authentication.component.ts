@@ -11,7 +11,7 @@ export class AuthenticationComponent {
   @Output() authenticated = new EventEmitter<boolean>();
   errorMessages: string[] = [];
 
-  onRegister = false;
+  onRegister = true;
 
   firstName = new FormControl();
   lastName = new FormControl();

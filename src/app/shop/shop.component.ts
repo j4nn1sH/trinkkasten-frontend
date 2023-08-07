@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { AuthenticationService } from '../authentication.service';
 import { ShopService } from '../shop.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { User, Shop } from '../models';
 
 @Component({
   selector: 'app-shop',
@@ -10,22 +11,30 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./shop.component.css']
 })
 export class ShopComponent {
-  kitchen: any = {};
+  shop: Shop = {
+    _id: '',
+    link: '',
+    name: '',
+    items: [],
+    users: [],
+    managers: []
+  };
+  user: User | null = null;
 
   current_section = 0;
   // 0: Select beverages
   // 1: Select user
   // 2: Confirm
-  users: any[] = [];
 
-  selectedBeverages: any[] = [];
+  selectedItems: any[] = [];
   totalPrice = 0;
-  selectedUser: any = {};
+  selectedUsers: User[] = [];
 
-  user: any = {};
-  loggedIn = false;
+  threshold = -10; // TODO put in shop model
+  multiSelect = false;
 
-  threshold = -10;
+  errorMessages: String[] = [];
+  success = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -35,87 +44,102 @@ export class ShopComponent {
   ) {}
 
   ngOnInit(): void {
-    this.loadAuthenticated();
-    this.getKitchen();
+    this.authService.me().subscribe((user) => {
+      user.balance = 0;
+      user.hide = false;
+
+      this.user = user;
+    });
+    this.loadShop();
   }
 
-  getKitchen() {
-    this.shopService.getKitchen(this.route.snapshot.paramMap.get('kitchen')!).subscribe((data) => {
-      data.beverages = data.beverages
-        .filter((beverage: any) => beverage.active)
-        .map((beverage: any) => {
-          beverage.amount = 0;
-          return beverage;
+  loadShop() {
+    var shop_id = this.route.snapshot.paramMap.get('shop_id')!;
+    this.shopService.getShop(shop_id).subscribe((data) => {
+      // Filter out inactive items
+      data.items = data.items
+        .filter((item: any) => item.active)
+        .map((item: any) => {
+          item.amount = 0;
+          return item;
         });
-      this.kitchen = data;
-      this.users = data.users
-      .filter((user: any) => !user.hide)
-      .map(
-        (user: any) => {
-          var balance = user.balance.toFixed(2);
-          user = user.user
-          user.balance = balance;
-          if(user._id == this.user._id) {
-            this.user = user;
+      // Push forward the user objects
+      data.users = data.users.map((u: any) => {
+        let user = u.user;
+        user.balance = u.balance;
+        user.hide = u.hide;
+        return user;
+      });
+
+      // Make sure the user is in the list
+      data.users.forEach((u: User) => {
+        if(u._id == this.user!._id) {
+          this.user!.balance = u.balance;
+          this.user!.hide = false;
+        }
+      });
+      data.users = data.users.filter((u: User) => u._id != this.user!._id)
+      data.users.push(this.user);
+
+      // Tests if user is manager
+      if(this.user) {
+        this.shopService.isManager(data._id).subscribe((isManager) => {
+          this.user!.isManager = isManager;
+          if(!isManager) {
+            data.users = data.users.filter((u: any) => !u.hide || u._id == this.user!._id);
           }
-          return user;
+          this.shop = data;
+         this.selectedUsers = [this.user!];
         });
+      }
     }, (error) => {
       this.router.navigate(['']);
     });
   }
 
-  loadAuthenticated() {
-    this.authService.isAuthenticated().subscribe((data) => {
-      this.loggedIn = true;
-      this.user = data;
-      this.selectedUser = data;
-    });
-  }
-
-  back() {
-    if(this.current_section == 2 && this.loggedIn) {
-      this.current_section--;
+  stepBack() {
+    if(this.current_section == 2) {
+      this.selectedUsers = [];
     }
     this.current_section--;
   }
 
-  addBeverage(beverage: any) {
-    //if(beverage.amount < beverage.stock) {
-      beverage.amount++;
-    //}
+  addItem(item: any) {
+    item.amount++;
   }
 
   selectBeverages() {
-    this.selectedBeverages = this.kitchen.beverages.filter((beverage: any) => beverage.amount > 0);
-    if(this.selectedBeverages.length == 0) {
+    this.selectedItems = this.shop.items.filter((item: any) => item.amount > 0);
+    if(this.selectedItems.length == 0) {
       return;
     }
-    this.totalPrice = this.selectedBeverages.reduce((total: number, beverage: any) => total + beverage.amount * beverage.price, 0);
-    this.loadAuthenticated();
-    if(this.loggedIn) {
-      this.current_section++;
-    }
+    this.totalPrice = this.selectedItems.reduce((total: number, beverage: any) => total + beverage.amount * beverage.price, 0);
     this.current_section++;
   }
 
-  selectUser(user: any) {
-    this.selectedUser = user;
-    this.current_section++;
+  selectUser(user: User) {
+    if(this.selectedUsers.includes(user)) {
+      this.selectedUsers = this.selectedUsers.filter((u) => u._id != user._id);
+      return;
+    } else if(!this.multiSelect) {
+      this.selectedUsers = [user];
+      this.current_section++;
+    } else {
+      this.selectedUsers.push(user);
+    }
   }
 
   confirm() {
-    this.current_section = 0;
-    this.ngOnInit();
-    this.shopService.buyBeverages(this.kitchen.name, this.selectedUser._id, this.selectedBeverages).subscribe((data) => {
+    if(this.selectedUsers == null) {
+      return;
+    }
+    this.shopService.buy(this.shop._id, this.selectedUsers, this.selectedItems).subscribe((data) => {
       this.ngOnInit();
-      this.selectedBeverages = [];
-      this.selectedUser = {};
       this.current_section = 0;
+      this.success = true;
+      this.multiSelect = false;
+    }, (error) => {
+      this.errorMessages.push(error.error);
     });
-  }
-
-  logout() {
-    this.authService.logout()
   }
 }

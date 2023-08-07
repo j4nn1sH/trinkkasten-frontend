@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ShopService } from '../shop.service';
 import { AuthenticationService } from '../authentication.service';
+import { User } from '../models';
 
 @Component({
   selector: 'app-list',
@@ -8,10 +9,12 @@ import { AuthenticationService } from '../authentication.service';
   styleUrls: ['./list.component.css']
 })
 export class ListComponent {
-  names: any[] = [];
+  user: User | null = null;
 
-  loggedIn = false;
-  user: any = {};
+  list: {
+    _id: String,
+    name: String,
+  }[] = [];
 
   constructor(
     private shopService: ShopService,
@@ -19,13 +22,12 @@ export class ListComponent {
   ) { }
 
   ngOnInit(): void {
-    this.authService.isAuthenticated().subscribe((data) => {
-      this.loggedIn = true;
-      this.user = data;
+    this.authService.me().subscribe((user: User) => {
+      this.user = user;
     });
 
-    this.shopService.getKitchenList().subscribe((data) => {
-      this.names = data;
+    this.shopService.getShopList().subscribe((list: {_id: String, name: String}[]) => {
+      this.list = list;
     });
   }
 }
