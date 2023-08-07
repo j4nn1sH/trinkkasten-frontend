@@ -2,6 +2,16 @@ import { Component } from '@angular/core';
 import { AuthenticationService } from '../authentication.service';
 import { ShopService } from '../shop.service';
 import { Location } from '@angular/common';
+import { User } from '../models';
+
+type Balance = {
+  shop_id: String,
+  name: String,
+  balance: Number,
+  link: String | null,
+  hide: boolean,
+  history?: any
+}
 
 @Component({
   selector: 'app-profile',
@@ -9,11 +19,12 @@ import { Location } from '@angular/common';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent {
-  user: any = {};
-  loggedIn = false;
-  payPalLink = ''
-  selectedBalance: any = {};
-  history: any = []
+
+
+  user: User | null = null
+
+  balanceList: Balance[] = []
+  selectedBalance: Balance | null = null
 
   constructor(
     private shopService: ShopService, // bad practice
@@ -22,27 +33,20 @@ export class ProfileComponent {
   ) {}
 
   ngOnInit(): void {
-    this.reloadAuthenticated();
-    this.getBalances();
-  }
-
-  reloadAuthenticated() {
-    this.authService.isAuthenticated().subscribe((data) => {
-      this.loggedIn = true;
+    this.authService.me().subscribe((data) => {
       this.user = data;
+      this.getBalanceList();
     });
   }
 
   logout() {
+    this.user = null;
     this.authService.logout();
-    this.loggedIn = false;
-    this.reloadAuthenticated();
   }
 
-  getBalances() {
-    this.shopService.getUserBalances().subscribe((data) => {
-      this.user.balances = data;
-      console.log(this.user.balances)
+  getBalanceList() {
+    this.shopService.getBalanceList().subscribe((data) => {
+      this.balanceList = data;
     });
   }
 
@@ -51,15 +55,15 @@ export class ProfileComponent {
       this.selectedBalance = null;
       return;
     }
-    this.shopService.getUserHistory(balance.kitchen).subscribe((data) => {
-      this.history = data
-      this.selectedBalance = balance;
+    this.selectedBalance = balance;
+    this.shopService.getHistory(balance.shop_id).subscribe((data) => {
+      this.selectedBalance!.history = data;
     })
   }
 
-  toggleHide(kitchenName: String) {
-    this.shopService.toggleHide(kitchenName).subscribe(() => {
-      this.ngOnInit();
+  toggleHide(shop_id: String) {
+    this.shopService.toggleHide(shop_id).subscribe(() => {
+      this.selectedBalance!.hide = !this.selectedBalance!.hide
     });
   }
 

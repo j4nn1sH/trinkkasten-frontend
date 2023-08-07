@@ -6,17 +6,17 @@
       </svg>
     </button>
   </div>
-  <app-authentication *ngIf="!loggedIn" (authenticated)="ngOnInit()"></app-authentication>
-  <div *ngIf="loggedIn">
+  <app-authentication *ngIf="!user" (authenticated)="ngOnInit()"></app-authentication>
+  <div *ngIf="user">
     <div class="flex flex-col justify-center items-center">
       <p class="text-xl font-light my-6">Hey {{user.firstName}}!🥳</p>
     </div>
     <div class="flex flex-col gap-3 max-w-md mx-auto justify-center">
-      <div *ngIf="user.balances.length == 0" class="w-44 py-6 mx-auto text-gray-400 font-extralight">Buy your first drink in a kitchen and see your balances listed here!</div>
-      <div *ngFor="let balance of user.balances" class="rounded-xl shadow-md shadow-secondary hover:shadow-rose-300 duration-150 p-2">
+      <div *ngIf="balanceList.length == 0" class="w-44 py-6 mx-auto text-gray-400 font-extralight">Put in your first order in a shop and see your balance listed here!</div>
+      <div *ngFor="let balance of balanceList" class="rounded-xl shadow-md shadow-secondary hover:shadow-rose-300 duration-150 p-2">
         <div (click)="selectBalance(balance)" class="grid grid-cols-3 h-12 cursor-pointer">
-          <div class="font-light text-gray-700 my-auto">{{ balance.kitchen }}</div>
-          <div class="font-light my-auto" [class.text-positive]="balance.balance > 0" [class.text-negative]="balance.balance < 0">{{ balance.balance | number: '.2'}}€</div>
+          <div class="font-light text-gray-700 my-auto">{{ balance.name }}</div>
+          <div class="font-light my-auto" [class.text-positive]="balance.balance > 0" [class.text-negative]="balance.balance < 0">{{ balance.balance.toString() | number:'1.2-2' }}€</div>
           <div>
             <a *ngIf="balance.link" [attr.href]="balance.link" class="w-fit h-fit rounded-xl"><button class="bg-[#003087] hover:bg-opacity-90 text-white ring-1 ring-gray-300 opacity-100">PayPal</button></a>
           </div>
@@ -24,18 +24,21 @@
         <div *ngIf="balance === selectedBalance">
           <hr class="m-2">
           <div class="grid gap-2">
-            <div *ngFor="let entry of history; let i = index" class="grid grid-cols-3 font-light text-gray-400 text-sm">
+            <div *ngFor="let entry of balance.history; let i = index" class="grid grid-cols-3 font-light text-gray-400 text-sm">
               <div>{{ entry.date | date:'dd/MM HH:mm' }}</div>
               <div>{{ entry.amount | number: '.2' }}€</div>
               <div class="flex flex-col gap-2">
-                <p *ngFor="let beverage of entry.beverages">{{beverage.count}}x {{beverage.name}} ({{beverage.price | number: '.2'}}€)</p>
+                <div *ngFor="let item of entry.items">
+                  {{item.count}}x {{item.name}} ({{item.price | number: '.2'}}€)
+                </div>
+                <p *ngFor="let item of entry.description" class="font-extralight"><i>{{item}}</i></p>
               </div>
             </div>
           </div>
         </div>
         <div class="flex justify-center py-3" *ngIf="balance === selectedBalance">
-          <button *ngIf="balance.hide" (click)="toggleHide(balance.kitchen)" class="px-2 py-1 bg-white hover:bg-opacity-90 text-gray-300 ring-1 ring-gray-300 opacity-100">Show me</button>
-          <button *ngIf="!balance.hide" (click)="toggleHide(balance.kitchen)" class="px-2 py-1 bg-white hover:bg-opacity-90 text-gray-300 ring-1 ring-gray-300 opacity-100">Hide me</button>
+          <button *ngIf="balance.hide" (click)="toggleHide(balance.shop_id)" class="px-2 py-1 bg-white hover:bg-opacity-90 text-gray-300 ring-1 ring-gray-300 opacity-100">Show me</button>
+          <button *ngIf="!balance.hide" (click)="toggleHide(balance.shop_id)" class="px-2 py-1 bg-white hover:bg-opacity-90 text-gray-300 ring-1 ring-gray-300 opacity-100">Hide me</button>
         </div>
       </div>
     </div>

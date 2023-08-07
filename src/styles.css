@@ -23,5 +23,5 @@ button {
 }
 
 .button-muted {
-  @apply ring-gray-200 text-gray-200 opacity-90 hover:opacity-100 active:scale-95 cursor-none pointer-events-none p-3 rounded-3xl font-light
+  @apply bg-white ring-1 ring-gray-200 text-gray-200 opacity-90 hover:opacity-100 active:scale-95 cursor-none pointer-events-none p-3 rounded-3xl font-light
 }
