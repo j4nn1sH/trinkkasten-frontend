@@ -4,6 +4,7 @@
       <img src="assets/arrow-right.svg" class="rotate-180 h-10">
     </button>
     <h1 class="font-amatic text-7xl hover:cursor-pointer" routerLink="../">{{ title }}</h1>
+    <div *ngIf="!title" class="h-[4.5em] bg-gray-100 animate-pulse mx-16 rounded-xl" routerLink="../"></div>
     <!-- Description -->
     <p class="text-slate-400">{{ description }}</p>
   </div>

@@ -36,6 +36,8 @@ export class ShopComponent {
   errorMessages: String[] = [];
   success = false;
 
+  loading = true;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -92,6 +94,7 @@ export class ShopComponent {
          this.selectedUsers = [this.user!];
         });
       }
+      this.loading = false;
     }, (error) => {
       this.router.navigate(['']);
     });
